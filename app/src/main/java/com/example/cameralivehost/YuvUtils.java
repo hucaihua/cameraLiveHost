@@ -1,15 +1,20 @@
 package com.example.cameralivehost;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.ImageFormat;
+import android.graphics.Rect;
+import android.graphics.YuvImage;
 import android.os.Environment;
 import android.util.Log;
 
+import java.io.ByteArrayOutputStream;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 
 public class YuvUtils {
 
-//暂时理解到这里
     public static void portraitData2Raw(byte[] data,byte[] output,int width,int height) {
         int y_len = width * height;
         int uvHeight = height >> 1; // uv数据高为y数据高的一半
@@ -30,6 +35,7 @@ public class YuvUtils {
 
 
     static  byte[] nv12;
+    // yyyy vuvu -> yyyy uvuv
     public static byte[]  nv21toNV12(byte[] nv21) {
 //        nv21   0----nv21.size
         int  size = nv21.length;
@@ -96,5 +102,24 @@ public class YuvUtils {
         return sb.toString();
     }
 
-
+    public static Bitmap showImage(byte[] data , int width , int height){
+        Bitmap newBitmap = null;
+        if (BuildConfig.DEBUG){
+            YuvImage yuvimage = new YuvImage(
+                    data,
+                    ImageFormat.NV21,
+                    width,
+                    height,
+                    null);
+            ByteArrayOutputStream stream = new ByteArrayOutputStream();
+            yuvimage.compressToJpeg(new Rect(0, 0, width, height), 80, stream);
+            newBitmap = BitmapFactory.decodeByteArray(stream.toByteArray(), 0, stream.size());
+            try {
+                stream.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        return newBitmap;
+    }
 }

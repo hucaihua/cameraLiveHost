@@ -1,5 +1,6 @@
 package com.example.cameralivehost;
 
+import android.graphics.Bitmap;
 import android.media.MediaCodec;
 import android.media.MediaCodecInfo;
 import android.media.MediaFormat;
@@ -30,7 +31,9 @@ public class H264Encoder{
 
     public void encodeFrame(byte[] input) {
         nv12 = YuvUtils.nv21toNV12(input);
+        Bitmap bitmap = YuvUtils.showImage(nv12 , width , height);
         YuvUtils.portraitData2Raw(nv12, yuv, width, height);
+        Bitmap bitmap1 = YuvUtils.showImage(yuv , width , height);
         int inputBufferIndex = mediaCodec.dequeueInputBuffer(100000);
         if (inputBufferIndex >= 0) {
             ByteBuffer[] byteBuffers = mediaCodec.getInputBuffers();
@@ -53,7 +56,7 @@ public class H264Encoder{
 
     public void startLive() {
         try {
-            MediaFormat mediaFormat = MediaFormat.createVideoFormat(MediaFormat.MIMETYPE_VIDEO_AVC , height,width);
+            MediaFormat mediaFormat = MediaFormat.createVideoFormat(MediaFormat.MIMETYPE_VIDEO_AVC , height ,width);
             //设置编码的数据格式来源，比如yuv，如果是从surface来的，直接写MediaCodecInfo.CodecCapabilities.COLOR_FormatSurface
             mediaFormat.setInteger(MediaFormat.KEY_COLOR_FORMAT, MediaCodecInfo.CodecCapabilities.COLOR_FormatYUV420Flexible);
             mediaFormat.setInteger(MediaFormat.KEY_FRAME_RATE , 20);

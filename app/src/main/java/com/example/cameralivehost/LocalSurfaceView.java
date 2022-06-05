@@ -1,6 +1,11 @@
 package com.example.cameralivehost;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.ImageFormat;
+import android.graphics.Rect;
+import android.graphics.YuvImage;
 import android.hardware.Camera;
 import android.util.AttributeSet;
 import android.view.SurfaceHolder;
@@ -8,6 +13,7 @@ import android.view.SurfaceView;
 
 import androidx.annotation.NonNull;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
 //1.打开camera 2. 设置camera对应的surface 3. 添加预览回调 4.开始预览 5.预览回调buffer给codec编码发送给客户端
@@ -37,6 +43,7 @@ public class LocalSurfaceView extends SurfaceView implements SurfaceHolder.Callb
         if (encoder != null) {
             encoder.encodeFrame(data);
         }
+
         mCamera.addCallbackBuffer(data);
     }
 
